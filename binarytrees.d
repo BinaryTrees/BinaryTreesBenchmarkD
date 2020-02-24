@@ -99,7 +99,7 @@ void main(in string[] args) {
   // While the tree stays live, create multiple trees. Local data is stored in
   // the "Data" variable.
   immutable auto highindex = (maxdepth - mindepth) / 2 + 1;
-  auto slice = data[0..highindex];
+  auto slice = data[0 .. highindex];
   foreach (i, ref item; taskPool().parallel(slice, 1)) {
     item.depth = cast(ubyte)(mindepth + i * 2);
     item.iterations = 1 << (maxdepth - i * 2);
