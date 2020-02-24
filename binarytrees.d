@@ -2,21 +2,21 @@ import core.stdc.stdlib, std.container.array, std.conv, std.parallelism, std.ran
 
 alias Pointer = void*;
 
-alias TFPList = Array!Pointer;
+alias TFPList = Array!(Pointer);
 
-// Below is a direct reimplementation of TNonFreePooledMemManager in D, which as I suspected
-// it would be is massively faster than attempting to rely on the GC for this benchmark.
+// Below is a direct reimplementation of Free Pascal's `TNonFreePooledMemManager` in D,
+// which as I suspected it would be is massively faster than attempting to rely on the GC
+// for this benchmark.
 
-class TNonFreePooledMemManager {
+class TNonFreePooledMemManager(T) {
 private:
-  size_t FItemSize, FCurSize, FFirstSize;
-  void *FCurItem, FEndItem;
+  size_t FFirstSize, FCurSize;
+  Pointer FCurItem, FEndItem;
   TFPList FItems;
 
 public:
-  this(const size_t TheItemSize) {
-    FItemSize = TheItemSize;
-    FFirstSize = FItemSize * 4;
+  this() {
+    FFirstSize = T.sizeof * 4;
     FCurSize = FFirstSize;
     FItems = TFPList();
   }
@@ -29,16 +29,16 @@ public:
 
   nothrow @nogc @trusted void clear() {
     if (FItems.length > 0) {
-      for (size_t i = 0; i < FItems.length; ++i)
+      for (auto i = 0; i < FItems.length; ++i)
         free(FItems[i]);
       FItems.clear();
     }
     FCurItem = null;
     FEndItem = null;
-    FCurSize = FItemSize * 4;
+    FCurSize = T.sizeof * 4;
   }
 
-  nothrow @nogc @trusted void *newItem() {
+  nothrow @nogc @trusted T* newItem() {
     if (FCurItem == FEndItem) {
       FCurSize += FCurSize;
       FCurItem = malloc(FCurSize);
@@ -46,13 +46,13 @@ public:
       FEndItem = FCurItem;
       FEndItem += FCurSize;
     }
-    void *result = FCurItem;
-    FCurItem += FItemSize;
-    return result;
+    Pointer result = FCurItem;
+    FCurItem += T.sizeof;
+    return cast(T*) result;
   }
 }
 
-alias TMemPool = TNonFreePooledMemManager;
+alias TNodePool = TNonFreePooledMemManager!(TNode);
 
 struct TDataRec {
   ubyte depth;
@@ -60,16 +60,16 @@ struct TDataRec {
 }
 
 struct TNode {
-  TNode *left, right;
+  TNode* left, right;
 
-  pragma(inline, true) pure nothrow @nogc @trusted static int checkNode(const TNode *node) {
+  pragma(inline, true) pure nothrow @nogc @trusted static int checkNode(const TNode* node) {
     if (node.right != null && node.left != null)
       return 1 + checkNode(node.right) + checkNode(node.left);
     return 1;
   }
 
-  pragma(inline, true) nothrow @nogc @trusted static TNode *makeTree(const int depth, TMemPool mp) {
-    TNode *result = cast(TNode *)mp.newItem();
+  pragma(inline, true) nothrow @nogc @trusted static TNode* makeTree(const int depth, TNodePool mp) {
+    auto result = mp.newItem();
     result.right = null;
     result.left = null;
     if (depth > 0) {
@@ -81,29 +81,30 @@ struct TNode {
 }
 
 static immutable int mindepth = 4;
+
 static TDataRec[9] data;
 
 void main(in string[] args) {
-  defaultPoolThreads(8);
-  immutable int maxdepth = args.length > 1 ? to !(int)(args[1]) : 10;
+  immutable auto maxdepth = args.length > 1 ? to !(int)(args[1]) : 10;
 
   // Create and destroy a tree of depth MaxDepth + 1.
-  auto pool = new TMemPool(TNode.sizeof);
-  writeln("stretch tree of depth ", maxdepth + 1, "\t check: ",
-          TNode.checkNode(TNode.makeTree(maxdepth + 1, pool)));
+  auto pool = new TNodePool();
+  stdout.writeln("stretch tree of depth ", maxdepth + 1, "\t check: ",
+                 TNode.checkNode(TNode.makeTree(maxdepth + 1, pool)));
   pool.clear();
 
   // Create a "long lived" tree of depth MaxDepth.
-  TNode *tree = TNode.makeTree(maxdepth, pool);
+  auto tree = TNode.makeTree(maxdepth, pool);
 
-  // While the tree stays live, create multiple trees. Local data is stored in the "Data" variable.
+  // While the tree stays live, create multiple trees. Local data is stored in
+  // the "Data" variable.
   immutable auto highindex = (maxdepth - mindepth) / 2 + 1;
   auto slice = data[0..highindex];
   foreach (i, ref item; taskPool().parallel(slice, 1)) {
     item.depth = cast(ubyte)(mindepth + i * 2);
     item.iterations = 1 << (maxdepth - i * 2);
     item.check = 0;
-    auto ipool = new TMemPool(TNode.sizeof);
+    auto ipool = new TNodePool();
     for (auto J = 1; J <= item.iterations; ++J) {
       item.check += TNode.checkNode(TNode.makeTree(item.depth, ipool));
       ipool.clear();
@@ -113,10 +114,12 @@ void main(in string[] args) {
 
   // Display the results.
   foreach (i, ref item; slice) {
-    writeln(item.iterations, "\t trees of depth ", item.depth, "\t check: ", item.check);
+    stdout.writeln(item.iterations, "\t trees of depth ", item.depth,
+                   "\t check: ", item.check);
   }
 
   // Check and destroy the long lived tree.
-  writeln("long lived tree of depth ", maxdepth, "\t check: ", TNode.checkNode(tree));
+  stdout.writeln("long lived tree of depth ", maxdepth, "\t check: ",
+                 TNode.checkNode(tree));
   destroy(pool);
 }
