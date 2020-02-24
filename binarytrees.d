@@ -1,8 +1,6 @@
 import core.stdc.stdlib, std.container.array, std.conv, std.parallelism, std.range, std.stdio;
 
-alias Pointer = void*;
-
-alias TFPList = Array!(Pointer);
+alias PointerList = Array!(void*);
 
 // Below is a direct reimplementation of Free Pascal's `TNonFreePooledMemManager` in D,
 // which as I suspected it would be is massively faster than attempting to rely on the GC
@@ -11,14 +9,14 @@ alias TFPList = Array!(Pointer);
 class TNonFreePooledMemManager(T) {
 private:
   size_t FFirstSize, FCurSize;
-  Pointer FCurItem, FEndItem;
-  TFPList FItems;
+  void* FCurItem, FEndItem;
+  PointerList FItems;
 
 public:
   this() {
     FFirstSize = T.sizeof * 4;
     FCurSize = FFirstSize;
-    FItems = TFPList();
+    FItems = PointerList();
   }
 
   ~this() {
@@ -46,7 +44,7 @@ public:
       FEndItem = FCurItem;
       FEndItem += FCurSize;
     }
-    Pointer result = FCurItem;
+    void* result = FCurItem;
     FCurItem += T.sizeof;
     return cast(T*) result;
   }
