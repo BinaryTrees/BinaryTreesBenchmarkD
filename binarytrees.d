@@ -6,7 +6,7 @@ alias PointerList = Array!(void*);
 // which as I suspected it would be is massively faster than attempting to rely on the GC
 // for this benchmark.
 
-class TNonFreePooledMemManager(T) {
+class TNonFreePooledMemManager(T) if (!(is(T == class) || is(T == interface))) {
 private:
   size_t FFirstSize, FCurSize;
   void* FCurItem, FEndItem;
