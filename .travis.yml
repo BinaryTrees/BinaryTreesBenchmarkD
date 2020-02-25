@@ -1,4 +1,6 @@
 language: d
+os: linux
+dist: bionic
 
 jobs:
   include:
