@@ -7,7 +7,7 @@ import core.stdc.stdlib, dvector;
 class TNonFreePooledMemManager(T) if (!(is(T == class) || is(T == interface))) {
 public:
   alias PointerList = Dvector!(void*);
-  
+
 private:
   size_t curSize;
   void* curItem, endItem;
@@ -16,6 +16,8 @@ private:
 public:
   this() {
     curSize = T.sizeof * 4;
+    curItem = null;
+    endItem = null;
     items = PointerList.init;
   }
 
@@ -27,12 +29,12 @@ public:
     if (items.length > 0) {
       for (auto i = 0; i < items.length; ++i)
         free(items[i]);
-      // Dvector's `free` member function is what other libraries more often call `clear` BTW
+      // Dvector's `free` member function is what other libraries more often call `clear`, BTW.
       items.free();
     }
+    curSize = T.sizeof * 4;
     curItem = null;
     endItem = null;
-    curSize = T.sizeof * 4;
   }
 
   nothrow @nogc T* newItem() {
