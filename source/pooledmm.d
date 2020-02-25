@@ -64,7 +64,7 @@ public:
         if (i == count - 1)
           last = endItem;
         while (p != last) {
-          proc(p);
+          proc(cast(T*) p);
           p += T.sizeof;
         }
       }
