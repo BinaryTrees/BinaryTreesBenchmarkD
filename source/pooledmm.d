@@ -1,4 +1,4 @@
-import core.stdc.stdlib, dvector;
+import core.stdc.stdlib, std.traits, dvector;
 
 // Below is a direct reimplementation of Free Pascal's `TNonFreePooledMemManager` in D,
 // which as I suspected it would be is massively faster than attempting to rely on the GC
