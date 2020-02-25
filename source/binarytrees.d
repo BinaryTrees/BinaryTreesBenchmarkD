@@ -18,8 +18,6 @@ struct TNode {
 
   pragma(inline, true) nothrow @nogc static TNode* makeTree(const int depth, TNodePool mp) {
     auto result = mp.newItem();
-    result.right = null;
-    result.left = null;
     if (depth > 0) {
       result.right = makeTree(depth - 1, mp);
       result.left = makeTree(depth - 1, mp);
