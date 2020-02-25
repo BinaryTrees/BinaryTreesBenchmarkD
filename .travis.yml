@@ -1,14 +1,14 @@
 language: d
 
+dist: bionic
+
 d:
   - dmd-nightly
   - ldc-latest-ci
 
-jobs:
-  include:
-  - os: linux
-    dist: bionic
-  - os: osx
+os:
+  - linux
+  - osx
 
 script: 
   - bash ./.travis.sh
