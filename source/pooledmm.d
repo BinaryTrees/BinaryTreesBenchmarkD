@@ -27,8 +27,12 @@ public:
 
   nothrow @nogc void clear() {
     if (items.length > 0) {
-      for (auto i = 0; i < items.length; ++i)
+      for (size_t i = 0; i < items.length; ++i) {
+        static if(hasElaborateDestructor!(T)) {
+          destroy(*(cast(T*) items[i]));
+        }
         free(items[i]);
+      }
       // Dvector's `free` member function is what other libraries more often call `clear`, BTW.
       items.free();
     }
@@ -45,8 +49,9 @@ public:
       endItem = curItem;
       endItem += curSize;
     }
-    void* result = curItem;
+    T* result = cast(T*) curItem;
     curItem += T.sizeof;
-    return cast(T*) result;
+    *result = T.init;
+    return result;
   }
 }
