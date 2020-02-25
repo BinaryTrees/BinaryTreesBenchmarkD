@@ -51,4 +51,23 @@ public:
     memset(result, 0, T.sizeof);
     return result;
   }
+
+  nothrow @nogc void enumerateItems(const void function(T* p) proc) {
+    if (items.length > 0) {
+      auto count = items.length;
+      auto size = T.sizeof * 4;
+      for (size_t i = 0; i < count; ++i) {
+        size += size;
+        auto p = items[i];
+        auto last = p;
+        last += size;
+        if (i == count - 1)
+          last = endItem;
+        while (p != last) {
+          proc(p);
+          p += T.sizeof;
+        }
+      }
+    }
+  }
 }
