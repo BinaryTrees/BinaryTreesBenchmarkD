@@ -1,0 +1,13 @@
+{
+    "name": "binarytrees",
+    "description": "Just a port of my Pascal Binary Trees benchmark implementation to familiarize myself with D a bit more for working on Dexed.",
+    "targetType": "executable",
+    "license": "MIT",
+    "dependencies": {
+      "dvector": ">=0.0.4"
+    },
+    "targetPath" : "bin/",
+    "targetName" : "binarytrees",
+    "importPaths": ["source"],
+    "sourcePaths": ["source"]
+}
