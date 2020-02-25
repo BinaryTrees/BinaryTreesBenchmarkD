@@ -4,8 +4,8 @@ import core.stdc.stdlib, core.stdc.string, std.traits, dvector;
 // which as I suspected it would be is massively faster than attempting to rely on the GC
 // for this benchmark.
 
-class TNonFreePooledMemManager(T)
-  if (!(is(T == class) || is(T == interface) || hasElaborateDestructor!(T))) {
+class TNonFreePooledMemManager(T) if (!(is(T == class) || is(T == interface))) {
+  static assert(!hasElaborateDestructor!(T));
 public:
   alias PointerList = Dvector!(void*);
 
