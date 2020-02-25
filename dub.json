@@ -6,6 +6,7 @@
     "dependencies": {
       "dvector": ">=0.0.4"
     },
+    "mainSourceFile": "binarytrees.d",
     "targetPath" : "bin/",
     "targetName" : "binarytrees",
     "importPaths": ["source"],
