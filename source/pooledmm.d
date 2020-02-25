@@ -5,6 +5,9 @@ import core.stdc.stdlib, dvector;
 // for this benchmark.
 
 class TNonFreePooledMemManager(T) if (!(is(T == class) || is(T == interface))) {
+public:
+  alias PointerList = Dvector!(void*);
+  
 private:
   size_t curSize;
   void* curItem, endItem;
