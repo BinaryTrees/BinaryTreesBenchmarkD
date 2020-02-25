@@ -1,21 +1,27 @@
 language: d
 
-matrix:
+jobs:
   include:
-    - name: "Linux"
+    - name: "Linux DMD"
       os: linux
       dist: bionic
       group: travis_latest
-      d:
-        - dmd-nightly
-        - ldc-latest-ci
-    - name: "Mac"
+      d: dmd-nightly
+    - name: "Mac DMD"
       os: osx
       osx_image: xcode11.3
       group: travis_latest
-      d:
-        - dmd-nightly
-        - ldc-latest-ci
+      d: dmd-nightly
+    - name: "Linux LDC"
+      os: linux
+      dist: bionic
+      group: travis_latest
+      d: ldc-latest-ci
+    - name: "Mac LDC"
+      os: osx
+      osx_image: xcode11.3
+      group: travis_latest
+      d: ldc-latest-ci
 
-script: 
+script:
   - bash ./.travis.sh
