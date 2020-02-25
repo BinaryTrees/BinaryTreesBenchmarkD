@@ -52,7 +52,7 @@ public:
     return result;
   }
 
-  nothrow @nogc void enumerateItems(const void function(T* p) proc) {
+  void enumerateItems(const void function(T* p) proc) {
     if (items.length > 0) {
       auto count = items.length;
       auto size = T.sizeof * 4;
