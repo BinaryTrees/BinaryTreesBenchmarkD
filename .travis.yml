@@ -1,0 +1,14 @@
+language: d
+
+d:
+  - dmd-nightly
+  - ldc-latest-ci
+
+jobs:
+  include:
+  - os: linux
+    dist: bionic
+  - os: osx
+
+script: 
+  - bash ./.travis.sh
