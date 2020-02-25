@@ -10,13 +10,13 @@ struct TDataRec {
 struct TNode {
   TNode* left, right;
 
-  pragma(inline, true) pure nothrow @nogc @trusted static int checkNode(const TNode* node) {
+  pragma(inline, true) pure nothrow @nogc static int checkNode(const TNode* node) {
     if (node.right != null && node.left != null)
       return 1 + checkNode(node.right) + checkNode(node.left);
     return 1;
   }
 
-  pragma(inline, true) nothrow @nogc @trusted static TNode* makeTree(const int depth, TNodePool mp) {
+  pragma(inline, true) nothrow @nogc static TNode* makeTree(const int depth, TNodePool mp) {
     auto result = mp.newItem();
     result.right = null;
     result.left = null;
@@ -60,6 +60,7 @@ void main(in string[] args) {
       item.check += TNode.checkNode(TNode.makeTree(item.depth, ipool));
       ipool.clear();
     }
+    // Call `destroy` directly because we want it to happen immediately.
     destroy(ipool);
   }
 
@@ -70,5 +71,6 @@ void main(in string[] args) {
 
   // Check and destroy the long lived tree.
   io.writeln("long lived tree of depth ", maxdepth, "\t check: ", TNode.checkNode(tree));
+  // Call `destroy` directly because we want it to happen immediately.
   destroy(pool);
 }
