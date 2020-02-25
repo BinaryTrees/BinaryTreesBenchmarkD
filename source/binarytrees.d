@@ -38,17 +38,17 @@ void main(in string[] args) {
 
   immutable auto maxdepth = args.length > 1 ? to !(int)(args[1]) : 10;
 
-  // Create and destroy a tree of depth MaxDepth + 1.
+  // Create and destroy a tree of depth `maxdepth + 1`.
   auto pool = new TNodePool();
   io.writeln("stretch tree of depth ", maxdepth + 1, "\t check: ",
              TNode.checkNode(TNode.makeTree(maxdepth + 1, pool)));
   pool.clear();
 
-  // Create a "long lived" tree of depth MaxDepth.
+  // Create a "long lived" tree of depth `maxdepth`.
   auto tree = TNode.makeTree(maxdepth, pool);
 
   // While the tree stays live, create multiple trees. Local data is stored in
-  // the "Data" variable.
+  // the `data` variable.
   immutable auto highindex = (maxdepth - mindepth) / 2 + 1;
   auto slice = data[0 .. highindex];
   foreach (i, ref item; taskPool().parallel(slice, 1)) {
