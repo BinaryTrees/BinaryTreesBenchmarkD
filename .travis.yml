@@ -1,28 +1,26 @@
 language: d
-os: linux
-dist: bionic
+
+d:
+  - dmd-nightly
+  - ldc-latest-ci
 
 jobs:
   include:
     - name: "Linux DMD"
       os: linux
       dist: bionic
-      group: travis_latest
       d: dmd-nightly
     - name: "Mac DMD"
       os: osx
       osx_image: xcode11.3
-      group: travis_latest
       d: dmd-nightly
     - name: "Linux LDC"
       os: linux
       dist: bionic
-      group: travis_latest
       d: ldc-latest-ci
     - name: "Mac LDC"
       os: osx
       osx_image: xcode11.3
-      group: travis_latest
       d: ldc-latest-ci
 
 script:
