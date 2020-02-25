@@ -1,9 +1,5 @@
 language: d
 
-d:
-  - dmd-nightly
-  - ldc-latest-ci
-
 jobs:
   include:
     - name: "Linux DMD"
