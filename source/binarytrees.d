@@ -60,8 +60,6 @@ void main(in string[] args) {
       item.check += TNode.checkNode(TNode.makeTree(item.depth, ipool));
       ipool.clear();
     }
-    // Call `destroy` directly because we want it to happen immediately.
-    destroy(ipool);
   }
 
   // Display the results.
@@ -71,6 +69,5 @@ void main(in string[] args) {
 
   // Check and destroy the long lived tree.
   io.writeln("long lived tree of depth ", maxdepth, "\t check: ", TNode.checkNode(tree));
-  // Call `destroy` directly because we want it to happen immediately.
-  destroy(pool);
+  pool.clear();
 }
