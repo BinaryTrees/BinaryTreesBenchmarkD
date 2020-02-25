@@ -1,14 +1,19 @@
 language: d
 
-dist: bionic
-
 d:
   - dmd-nightly
   - ldc-latest-ci
 
-os:
-  - linux
-  - osx
+matrix:
+  include:
+    - name: "Linux"
+      os: linux
+      dist: bionic
+      group: travis_latest
+    - name: "Mac"
+      os: osx
+      osx_image: xcode11.3
+      group: travis_latest
 
 script: 
   - bash ./.travis.sh
