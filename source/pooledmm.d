@@ -26,9 +26,7 @@ private:
 public:
   this() {
     curSize = T.sizeof * 4;
-    curItem = null;
-    endItem = null;
-    items = TPointerList.init;
+    // For the other fields, the default-initialized values are exactly what we want.
   }
 
   ~this() {
