@@ -6,8 +6,9 @@
     "dependencies": {
       "dvector": ">=0.0.4"
     },
-    "targetPath" : "./bin/",
-    "targetName" : "binarytrees_benchmark",
+    "targetPath": "./bin/",
+    "targetName": "binarytrees_benchmark",
     "importPaths": ["./source"],
-    "sourcePaths": ["./source"]
+    "sourcePaths": ["./source"],
+    "dflags": ["-w"]
 }
