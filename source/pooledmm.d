@@ -11,6 +11,9 @@ import core.stdc.stdlib, core.stdc.string, std.traits, dvector;
 
 class TNonFreePooledMemManager(T) if (!(is(T == class) || is(T == interface))) {
   static assert(!hasElaborateDestructor!(T));
+  static foreach (field; Fields!T) {
+    static assert(!(is(field == class) || is(field == interface)));
+  }
 public:
   alias TPointerList = Dvector!(void*);
   alias TEnumItemsProc = void delegate(T* p);
