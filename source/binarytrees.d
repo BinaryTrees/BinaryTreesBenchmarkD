@@ -32,7 +32,11 @@ static TDataRec[9] data;
 
 void main(in string[] args) {
   // Get a local pointer to `stdout` to avoid repeated `makeGlobal()` calls with `writeln`.
-  auto io = &stdout();
+  version(GNU) {
+    auto io = &stdout;
+  } else {
+    auto io = &stdout();
+  }
 
   immutable auto maxdepth = args.length > 1 ? to!(int)(args[1]) : 10;
 
