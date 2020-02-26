@@ -7,19 +7,20 @@ import core.stdc.stdlib, core.stdc.string, std.traits, dvector;
 class TNonFreePooledMemManager(T) if (!(is(T == class) || is(T == interface))) {
   static assert(!hasElaborateDestructor!(T));
 public:
-  alias PointerList = Dvector!(void*);
+  alias TPointerList = Dvector!(void*);
+  alias TEnumItemsProc = void delegate(T* p);
 
 private:
   size_t curSize;
   void* curItem, endItem;
-  PointerList items;
+  TPointerList items;
 
 public:
   this() {
     curSize = T.sizeof * 4;
     curItem = null;
     endItem = null;
-    items = PointerList.init;
+    items = TPointerList.init;
   }
 
   ~this() {
@@ -52,9 +53,9 @@ public:
     return result;
   }
 
-  void enumerateItems(const void function(T* p) proc) {
+  void enumerateItems(const TEnumItemsProc proc) {
     if (items.length > 0) {
-      auto count = items.length;
+      immutable auto count = items.length;
       auto size = T.sizeof * 4;
       for (size_t i = 0; i < count; ++i) {
         size += size;
