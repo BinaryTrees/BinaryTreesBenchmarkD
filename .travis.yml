@@ -18,10 +18,10 @@ jobs:
       os: osx
       osx_image: xcode11.3
       d: ldc-latest-ci
-    - name: "Linux GDC"
-      os: linux
-      dist: bionic
-      d: gdc
+    # - name: "Linux GDC"
+    #   os: linux
+    #   dist: bionic
+    #   d: gdc
 
 script:
   - bash ./.travis.sh
