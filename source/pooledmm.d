@@ -24,7 +24,7 @@ private:
 
 public:
   this() {
-    curSize = T.sizeof * 4;
+    curSize = T.sizeof * 8;
     // For the other fields, the default-initialized values are exactly what we want.
   }
 
@@ -39,7 +39,7 @@ public:
       // Dvector's `free` member function is what other libraries more often call `clear`, BTW.
       items.free();
     }
-    curSize = T.sizeof * 4;
+    curSize = T.sizeof * 8;
     curItem = null;
     endItem = null;
   }
@@ -61,7 +61,7 @@ public:
   void enumerateItems(const TEnumItemsProc proc) {
     if (items.length > 0) {
       immutable auto count = items.length;
-      auto size = T.sizeof * 4;
+      auto size = T.sizeof * 8;
       for (size_t i = 0; i < count; ++i) {
         size += size;
         auto p = items[i];
