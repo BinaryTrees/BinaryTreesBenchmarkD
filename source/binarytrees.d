@@ -2,7 +2,7 @@
 // Year: 2020
 // License: MIT
 
-import std.conv, std.parallelism, std.range, std.stdio, pooledmm;
+import core.stdc.stdio, std.conv, std.parallelism, std.range, pooledmm;
 
 alias TNodePool = TNonFreePooledMemManager!(TNode);
 
@@ -35,15 +35,12 @@ static immutable int mindepth = 4;
 static TDataRec[9] data;
 
 void main(in string[] args) {
-  // Get a local pointer to `stdout` to avoid repeated `makeGlobal()` calls with `writeln`.
-  auto io = &stdout();
-
   immutable auto maxdepth = args.length > 1 ? to!(int)(args[1]) : 10;
 
   // Create and destroy a tree of depth `maxdepth + 1`.
   auto pool = new TNodePool();
-  io.writeln("stretch tree of depth ", maxdepth + 1, "\t check: ",
-             TNode.checkNode(TNode.makeTree(maxdepth + 1, pool)));
+  printf("%s%u%s%d\n", "stretch tree of depth ", maxdepth + 1, "\t check: ",
+         TNode.checkNode(TNode.makeTree(maxdepth + 1, pool)));
   pool.clear();
 
   // Create a "long lived" tree of depth `maxdepth`.
@@ -58,7 +55,7 @@ void main(in string[] args) {
     item.iterations = 1 << (maxdepth - i * 2);
     item.check = 0;
     auto ipool = new TNodePool();
-    for (auto J = 1; J <= item.iterations; ++J) {
+    for (auto j = 1; j <= item.iterations; ++j) {
       item.check += TNode.checkNode(TNode.makeTree(item.depth, ipool));
       ipool.clear();
     }
@@ -66,10 +63,10 @@ void main(in string[] args) {
 
   // Display the results.
   foreach (i, ref item; slice) {
-    io.writeln(item.iterations, "\t trees of depth ", item.depth, "\t check: ", item.check);
+    printf("%d%s%u%s%d\n", item.iterations, "\t trees of depth ", item.depth, "\t check: ", item.check);
   }
 
   // Check and destroy the long lived tree.
-  io.writeln("long lived tree of depth ", maxdepth, "\t check: ", TNode.checkNode(tree));
+  printf("%s%u%s%d\n", "long lived tree of depth ", maxdepth, "\t check: ", TNode.checkNode(tree));
   pool.clear();
 }
