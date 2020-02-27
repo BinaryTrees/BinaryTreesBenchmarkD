@@ -10,5 +10,5 @@
     "targetName": "binarytrees_benchmark",
     "importPaths": ["./source"],
     "sourcePaths": ["./source"],
-    "dflags": ["-w"]
+    "dflags": ["-mcpu=native", "-w"]
 }
