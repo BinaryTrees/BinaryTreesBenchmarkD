@@ -35,7 +35,6 @@ static immutable ubyte mindepth = 4;
 static TDataRec[9] data;
 
 void main(in string[] args) {
-  GC.disable();
   // Get a local pointer to `stdout` to avoid repeated `makeGlobal()` calls with `writeln`.
   auto io = &stdout();
 
@@ -73,5 +72,4 @@ void main(in string[] args) {
   // Check and destroy the long lived tree.
   io.writeln("long lived tree of depth ", maxdepth, "\t check: ", TNode.checkNode(tree));
   pool.clear();
-  GC.enable();
 }
