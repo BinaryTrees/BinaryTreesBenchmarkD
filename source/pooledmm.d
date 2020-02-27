@@ -1,3 +1,7 @@
+// Original author: Akira1364
+// Year: 2020
+// License: MIT
+
 import core.stdc.stdlib, core.stdc.string, std.traits, dvector;
 
 // Below is a direct reimplementation of Free Pascal's `TNonFreePooledMemManager` in D,
