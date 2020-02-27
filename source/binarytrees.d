@@ -2,7 +2,7 @@
 // Year: 2020
 // License: MIT
 
-import core.memory, std.conv, std.parallelism, std.range, std.stdio, pooledmm;
+import std.conv, std.parallelism, std.range, std.stdio, pooledmm;
 
 alias TNodePool = TNonFreePooledMemManager!(TNode);
 
