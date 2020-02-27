@@ -4,11 +4,6 @@ import core.stdc.stdlib, core.stdc.string, std.traits, dvector;
 // which as I suspected it would be is massively faster than attempting to rely on the GC
 // for this benchmark.
 
-// Luckily, D's rules with regards to arithmetic on untyped pointers are identical to Free
-// Pascal's rules with regards to it (as opposed to something like C++'s rules where this
-// just wouldn't quite work without some changes) so I was able to do a pretty one-to-one
-// translation of the original code.
-
 class TNonFreePooledMemManager(T) if (!(is(T == class) || is(T == interface))) {
   static assert(!hasElaborateDestructor!(T));
   static foreach (field; Fields!T) {
