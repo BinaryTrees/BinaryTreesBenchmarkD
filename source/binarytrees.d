@@ -2,7 +2,12 @@
 // Year: 2020
 // License: MIT
 
-import core.stdc.stdio, std.conv, std.parallelism, std.range, pooledmm;
+// Start the GC in a disabled state.
+extern(C) __gshared string[] rt_options = [
+  "gcopt=disable:1"
+];
+
+import core.memory, std.conv, std.parallelism, std.range, std.stdio, pooledmm;
 
 alias TNodePool = TNonFreePooledMemManager!(TNode);
 
@@ -35,12 +40,15 @@ static immutable ubyte mindepth = 4;
 static TDataRec[9] data;
 
 void main(in string[] args) {
+  // Get a local pointer to `stdout` to avoid repeated `makeGlobal()` calls with `writeln`.
+  auto io = &stdout();
+
   immutable ubyte maxdepth = args.length > 1 ? to!(ubyte)(args[1]) : 10;
 
   // Create and destroy a tree of depth `maxdepth + 1`.
   auto pool = new TNodePool();
-  immutable int max_check = TNode.checkNode(TNode.makeTree(maxdepth + 1, pool));
-  printf("%s%u%s%d\n", "stretch tree of depth ", maxdepth + 1, "\t check: ", max_check);
+  io.writeln("stretch tree of depth ", maxdepth + 1, "\t check: ",
+             TNode.checkNode(TNode.makeTree(maxdepth + 1, pool)));
   pool.clear();
 
   // Create a "long lived" tree of depth `maxdepth`.
@@ -51,7 +59,7 @@ void main(in string[] args) {
   immutable ubyte highindex = (maxdepth - mindepth) / 2 + 1;
   auto slice = data[0 .. highindex];
   foreach (i, ref item; taskPool().parallel(slice, 1)) {
-    item.depth = cast(ubyte)(mindepth + i * 2);
+    item.depth = mindepth + i * 2;
     item.iterations = 1 << (maxdepth - i * 2);
     item.check = 0;
     auto ipool = new TNodePool();
@@ -62,13 +70,13 @@ void main(in string[] args) {
   }
 
   // Display the results.
-  for (ubyte i = 0; i < highindex; ++i) {
-    immutable auto item = &slice[i];
-    printf("%d%s%u%s%d\n", item.iterations, "\t trees of depth ", item.depth, "\t check: ", item.check);
+  foreach (i, ref item; slice) {
+    io.writeln(item.iterations, "\t trees of depth ", item.depth, "\t check: ", item.check);
   }
 
   // Check and destroy the long lived tree.
-  immutable int long_lived_check = TNode.checkNode(tree);
-  printf("%s%u%s%d\n", "long lived tree of depth ", maxdepth, "\t check: ", long_lived_check);
+  io.writeln("long lived tree of depth ", maxdepth, "\t check: ", TNode.checkNode(tree));
   pool.clear();
+  GC.collect();
+  GC.enable();
 }
