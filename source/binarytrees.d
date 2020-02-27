@@ -62,7 +62,7 @@ void main(in string[] args) {
   }
 
   // Display the results.
-  for (ubyte i = 0; i < highindex; ++i)
+  for (ubyte i = 0; i < highindex; ++i) {
     immutable auto item = &slice[i];
     printf("%d%s%u%s%d\n", item.iterations, "\t trees of depth ", item.depth, "\t check: ", item.check);
   }
