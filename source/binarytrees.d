@@ -1,3 +1,7 @@
+// Original author: Akira1364
+// Year: 2020
+// License: MIT
+
 import std.conv, std.parallelism, std.range, std.stdio, pooledmm;
 
 alias TNodePool = TNonFreePooledMemManager!(TNode);
