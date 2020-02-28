@@ -8,6 +8,9 @@ import core.stdc.stdlib, core.stdc.string, std.traits, dvector;
 // which as I suspected it would be is massively faster than attempting to rely on the GC
 // for this benchmark.
 
+// Basically what I'm trying to do with the static checks here is ensure that `T` can safely be allocated
+// with `malloc`, zeroed with `memset`, and deallocated with `free`. If there's a better way to do it than
+// what I have at the moment, please feel free to open a PR to change it to whatever that may be!
 class TNonFreePooledMemManager(T, const size_t initialSize = 32) if (!(is(T == class) || is(T == interface))) {
   static assert(!hasElaborateDestructor!(T));
   static foreach (field; Fields!T) {
