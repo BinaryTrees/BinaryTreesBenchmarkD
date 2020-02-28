@@ -36,10 +36,10 @@ public:
         free(items[i]);
       // Dvector's `free` member function is what other libraries more often call `clear`, BTW.
       items.free();
+      curSize = T.sizeof * initialSize;
+      curItem = null;
+      endItem = null;
     }
-    curSize = T.sizeof * initialSize;
-    curItem = null;
-    endItem = null;
   }
 
   pragma(inline, true) nothrow @nogc T* newItem() {
