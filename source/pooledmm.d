@@ -8,7 +8,7 @@ import core.stdc.stdlib, core.stdc.string, std.traits, dvector;
 // which as I suspected it would be is massively faster than attempting to rely on the GC
 // for this benchmark.
 
-class TNonFreePooledMemManager(T, const size_t initialSize = 4) if (!(is(T == class) || is(T == interface))) {
+class TNonFreePooledMemManager(T, const size_t initialSize = 32) if (!(is(T == class) || is(T == interface))) {
   static assert(!hasElaborateDestructor!(T));
   static foreach (field; Fields!T) {
     static assert(!(is(field == class) || is(field == interface)));
@@ -58,6 +58,9 @@ public:
     return result;
   }
 
+  // Note that this enumerates *all allocated* items, i.e. a number
+  // which is always greater than both `items.size()` and the number
+  // of times that `new_item()` has been called.
   void enumerateItems(const TEnumItemsProc proc) {
     if (items.length > 0) {
       immutable auto count = items.length;
