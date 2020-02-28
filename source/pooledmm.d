@@ -8,7 +8,7 @@ import core.stdc.stdlib, core.stdc.string, std.traits, dvector;
 // which as I suspected it would be is massively faster than attempting to rely on the GC
 // for this benchmark.
 
-class TNonFreePooledMemManager(T) if (!(is(T == class) || is(T == interface))) {
+class TNonFreePooledMemManager(T, const size_t initialSize = 4) if (!(is(T == class) || is(T == interface))) {
   static assert(!hasElaborateDestructor!(T));
   static foreach (field; Fields!T) {
     static assert(!(is(field == class) || is(field == interface)));
@@ -24,7 +24,7 @@ private:
 
 public:
   this() {
-    curSize = T.sizeof * 16;
+    curSize = T.sizeof * initialSize;
     // For the other fields, the default-initialized values are exactly what we want.
   }
 
@@ -39,7 +39,7 @@ public:
       // Dvector's `free` member function is what other libraries more often call `clear`, BTW.
       items.free();
     }
-    curSize = T.sizeof * 16;
+    curSize = T.sizeof * initialSize;
     curItem = null;
     endItem = null;
   }
@@ -61,7 +61,7 @@ public:
   void enumerateItems(const TEnumItemsProc proc) {
     if (items.length > 0) {
       immutable auto count = items.length;
-      auto size = T.sizeof * 16;
+      auto size = T.sizeof * initialSize;
       for (size_t i = 0; i < count; ++i) {
         size += size;
         auto p = items[i];

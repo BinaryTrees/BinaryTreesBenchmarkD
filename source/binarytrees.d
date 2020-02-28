@@ -4,7 +4,7 @@
 
 import std.conv, std.parallelism, std.range, std.stdio, pooledmm;
 
-alias TNodePool = TNonFreePooledMemManager!(TNode);
+alias TNodePool = TNonFreePooledMemManager!(TNode, 16);
 
 struct TDataRec {
   ubyte depth;
