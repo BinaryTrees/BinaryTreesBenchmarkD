@@ -20,7 +20,7 @@ struct TNode {
     return 1;
   }
 
-  pragma(inline, true) nothrow @nogc static TNode* makeTree(const int depth, TNodePool mp) {
+  pragma(inline, true) nothrow @nogc static TNode* makeTree(const int depth, TNodePool* mp) {
     auto result = mp.newItem();
     if (depth > 0) {
       result.right = makeTree(depth - 1, mp);
@@ -41,13 +41,13 @@ void main(in string[] args) {
   immutable ubyte maxdepth = args.length > 1 ? to!(ubyte)(args[1]) : 10;
 
   // Create and destroy a tree of depth `maxdepth + 1`.
-  auto pool = new TNodePool();
+  TNodePool pool;
   io.writeln("stretch tree of depth ", maxdepth + 1, "\t check: ",
-             TNode.checkNode(TNode.makeTree(maxdepth + 1, pool)));
+             TNode.checkNode(TNode.makeTree(maxdepth + 1, &pool)));
   pool.clear();
 
   // Create a "long lived" tree of depth `maxdepth`.
-  auto tree = TNode.makeTree(maxdepth, pool);
+  auto tree = TNode.makeTree(maxdepth, &pool);
 
   // While the tree stays live, create multiple trees. Local data is stored in
   // the `data` variable.
@@ -57,9 +57,9 @@ void main(in string[] args) {
     item.depth = cast(ubyte)(mindepth + i * 2);
     item.iterations = 1 << (maxdepth - i * 2);
     item.check = 0;
-    auto ipool = new TNodePool();
+    TNodePool ipool;
     for (int j = 1; j <= item.iterations; ++j) {
-      item.check += TNode.checkNode(TNode.makeTree(item.depth, ipool));
+      item.check += TNode.checkNode(TNode.makeTree(item.depth, &ipool));
       ipool.clear();
     }
   }
