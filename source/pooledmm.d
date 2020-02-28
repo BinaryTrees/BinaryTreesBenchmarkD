@@ -59,8 +59,8 @@ public:
   }
 
   // Note that this enumerates *all allocated* items, i.e. a number
-  // which is always greater than both `items.size()` and the number
-  // of times that `new_item()` has been called.
+  // which is always greater than both `items.length` and the number
+  // of times that `newItem()` has been called.
   void enumerateItems(const TEnumItemsProc proc) {
     if (items.length > 0) {
       immutable auto count = items.length;
