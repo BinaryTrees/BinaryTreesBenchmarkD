@@ -11,27 +11,22 @@ import core.stdc.stdlib, core.stdc.string, std.traits, dvector;
 // Basically what I'm trying to do with the static checks here is ensure that `T` can safely be allocated
 // with `malloc`, zeroed with `memset`, and deallocated with `free`. If there's a better way to do it than
 // what I have at the moment, please feel free to open a PR to change it to whatever that may be!
-class TNonFreePooledMemManager(T, const size_t initialSize = 32) if (!(is(T == class) || is(T == interface))) {
+struct TNonFreePooledMemManager(T, const size_t initialSize = 32) if (!(is(T == class) || 
+                                                                        is(T == interface))) {
   static assert(!hasElaborateDestructor!(T));
   static foreach (field; Fields!T) {
-    static assert(!(is(field == class) || is(field == interface)));
+    static assert(!(is(field == class) || 
+                    is(field == interface)));
   }
-public:
-  alias TPointerList = Dvector!(void*);
-  alias TEnumItemsProc = void delegate(T* p);
-
 private:
-  size_t curSize;
+  size_t curSize = T.sizeof * initialSize;
   void* curItem, endItem;
-  TPointerList items;
+  Dvector!(void*) items;
 
 public:
-  this() {
-    curSize = T.sizeof * initialSize;
-    // For the other fields, the default-initialized values are exactly what we want.
-  }
+  @disable this(this);
 
-  ~this() {
+  nothrow @nogc ~this() {
     clear();
   }
 
@@ -60,6 +55,8 @@ public:
     memset(result, 0, T.sizeof);
     return result;
   }
+  
+  alias TEnumItemsProc = void delegate(T* p);
 
   // Note that this enumerates *all allocated* items, i.e. a number
   // which is always greater than both `items.length` and the number
