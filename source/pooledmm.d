@@ -26,11 +26,11 @@ private:
 public:
   @disable this(this);
 
-  nothrow @nogc ~this() {
+  pragma(inline, true) nothrow @nogc ~this() {
     clear();
   }
 
-  nothrow @nogc void clear() {
+  pragma(inline, true) nothrow @nogc void clear() {
     if (items.length > 0) {
       for (size_t i = 0; i < items.length; ++i)
         free(items[i]);
@@ -42,7 +42,7 @@ public:
     endItem = null;
   }
 
-  nothrow @nogc T* newItem() {
+  pragma(inline, true) nothrow @nogc T* newItem() {
     if (curItem == endItem) {
       curSize += curSize;
       curItem = malloc(curSize);
@@ -56,12 +56,12 @@ public:
     return result;
   }
   
-  alias TEnumItemsProc = void delegate(T* p);
+  alias TEnumItemsProc = nothrow @nogc void delegate(T* p);
 
   // Note that this enumerates *all allocated* items, i.e. a number
   // which is always greater than both `items.length` and the number
   // of times that `newItem()` has been called.
-  void enumerateItems(const TEnumItemsProc proc) {
+  pragma(inline, true) nothrow @nogc void enumerateItems(const TEnumItemsProc proc) {
     if (items.length > 0) {
       immutable auto count = items.length;
       auto size = T.sizeof * initialSize;
