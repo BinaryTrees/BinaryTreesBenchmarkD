@@ -4,4 +4,8 @@ Just a port of my [Free Pascal](https://benchmarksgame-team.pages.debian.net/ben
 
 Recommended command line for building and running this:
 
-`dub build --build=release-nobounds`
+```
+dub build --build=release-nobounds
+cd ./bin
+time ./binarytrees_benchmark 21
+```
