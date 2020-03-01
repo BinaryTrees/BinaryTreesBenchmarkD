@@ -33,14 +33,8 @@ public:
 
   pragma(inline, true) nothrow @nogc void clear() {
     if (items.length > 0) {
-      version (DMD) {
-        // DMD can't inline the `foreach` version of this function for some reason.
-        for (size_t i = 0; i < items.length; ++i)
-          free(items[i]);
-      } else {
-        foreach (item; items)
-          free(item);
-      }
+      for (size_t i = 0; i < items.length; ++i)
+        free(items[i]);
       // Dvector's `free` member function is what other libraries more often call `clear`, BTW.
       items.free();
       curSize = initialSize;
