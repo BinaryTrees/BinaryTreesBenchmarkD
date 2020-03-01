@@ -11,7 +11,7 @@ import core.stdc.stdlib, core.stdc.string, std.traits, dvector;
 // Basically what I'm trying to do with the static checks here is ensure that `T` can safely be allocated
 // with `malloc`, zeroed with `memset`, and deallocated with `free`. If there's a better way to do it than
 // what I have at the moment, please feel free to open a PR to change it to whatever that may be!
-struct TNonFreePooledMemManager(T, const size_t initialSize = 32) if (!(is(T == class) ||
+struct TNonFreePooledMemManager(T, const size_t initialSize = 64) if (!(is(T == class) ||
                                                                         is(T == interface))) {
   static assert(!hasElaborateDestructor!(T));
   static foreach (field; Fields!T) {
@@ -20,7 +20,8 @@ struct TNonFreePooledMemManager(T, const size_t initialSize = 32) if (!(is(T == 
   }
 private:
   size_t curSize = initialSize;
-  T* curItem, endItem;
+  T* curItem = null;
+  T* endItem = null;
   Dvector!(T*) items;
 
 public:
@@ -32,8 +33,14 @@ public:
 
   pragma(inline, true) nothrow @nogc void clear() {
     if (items.length > 0) {
-      for (size_t i = 0; i < items.length; ++i)
-        free(items[i]);
+      version (DMD) {
+        // DMD can't inline the `foreach` version of this function for some reason.
+        for (size_t i = 0; i < items.length; ++i)
+          free(items[i]);
+      } else {
+        foreach (item; items)
+          free(item);
+      }
       // Dvector's `free` member function is what other libraries more often call `clear`, BTW.
       items.free();
       curSize = initialSize;
