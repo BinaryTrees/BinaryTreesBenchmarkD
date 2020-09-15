@@ -35,15 +35,12 @@ static immutable ubyte mindepth = 4;
 static TDataRec[9] data;
 
 void main(in string[] args) {
-  // Get a local pointer to `stdout` to avoid repeated `makeGlobal()` calls with `writeln`.
-  auto io = &stdout();
-
   immutable ubyte maxdepth = args.length > 1 ? to!(ubyte)(args[1]) : 10;
 
   // Create and destroy a tree of depth `maxdepth + 1`.
   TNodePool pool;
-  io.writeln("stretch tree of depth ", maxdepth + 1, "\t check: ",
-             TNode.checkNode(TNode.makeTree(maxdepth + 1, &pool)));
+  writeln("stretch tree of depth ", maxdepth + 1, "\t check: ",
+          TNode.checkNode(TNode.makeTree(maxdepth + 1, &pool)));
   pool.clear();
 
   // Create a "long lived" tree of depth `maxdepth`.
@@ -66,10 +63,10 @@ void main(in string[] args) {
 
   // Display the results.
   foreach (i, ref item; slice) {
-    io.writeln(item.iterations, "\t trees of depth ", item.depth, "\t check: ", item.check);
+    writeln(item.iterations, "\t trees of depth ", item.depth, "\t check: ", item.check);
   }
 
   // Check and destroy the long lived tree.
-  io.writeln("long lived tree of depth ", maxdepth, "\t check: ", TNode.checkNode(tree));
+  writeln("long lived tree of depth ", maxdepth, "\t check: ", TNode.checkNode(tree));
   pool.clear();
 }
