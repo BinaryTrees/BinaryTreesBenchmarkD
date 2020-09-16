@@ -21,7 +21,7 @@ struct TNode {
   }
 
   pragma(inline, true) nothrow @nogc static TNode* makeTree(const int depth, TNodePool* mp) {
-    auto result = mp.newItem();
+    TNode* result = mp.newItem();
     if (depth > 0) {
       result.right = makeTree(depth - 1, mp);
       result.left = makeTree(depth - 1, mp);
@@ -44,7 +44,7 @@ void main(in string[] args) {
   pool.clear();
 
   // Create a "long lived" tree of depth `maxdepth`.
-  auto tree = TNode.makeTree(maxdepth, &pool);
+  TNode* tree = TNode.makeTree(maxdepth, &pool);
 
   // While the tree stays live, create multiple trees. Local data is stored in
   // the `data` variable.
