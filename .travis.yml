@@ -4,23 +4,23 @@ jobs:
   include:
     - name: "Linux DMD"
       os: linux
-      dist: bionic
+      dist: focal
       d: dmd-nightly
     - name: "Mac DMD"
       os: osx
-      osx_image: xcode11.3
+      osx_image: xcode13.1
       d: dmd-nightly
     - name: "Linux LDC"
       os: linux
-      dist: bionic
+      dist: focal
       d: ldc-latest-ci
     - name: "Mac LDC"
       os: osx
-      osx_image: xcode11.3
+      osx_image: xcode13.1
       d: ldc-latest-ci
     # - name: "Linux GDC"
     #   os: linux
-    #   dist: bionic
+    #   dist: focal
     #   d: gdc
 
 script:
